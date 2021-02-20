@@ -1,9 +1,9 @@
 <template>
   <div id="app">
     <router-view/>
-    <!-- <div class="global-loading" v-show="isShowLoading">
+    <div class="global-loading" v-show="isShowLoading">
         <Spin size="large"></Spin>
-    </div> -->
+    </div>
   </div>
 </template>
 
