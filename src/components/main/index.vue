@@ -80,25 +80,17 @@
                         <div class="pointer" @click="isShrinkAside" title="收缩/展开">
                             <Icon type="ios-apps" />
                         </div>
-                        <!-- 面包屑功能 -->
-                        <p class="crumbs">{{crumbs}}</p>
                     </div>
                     <div class="h-right">
-                        <!-- 消息 -->
-                        <div class="notice-c" @click="info" title="查看新消息">
-                            <div :class="{newMsg: hasNewMsg}"></div>
-                            <Icon type="ios-notifications-outline" />
-                        </div>
-                        <!-- 用户头像 -->
-                        <div class="user-img-c">
-                            <img :src="userImg">
-                        </div>
+                       
                         <!-- 下拉菜单 -->
                         <Dropdown trigger="click" @on-click="userOperate" @on-visible-change="showArrow">
-                            <div class="pointer">
+                            <div class="pointer flex">
+                                 <!-- 用户头像 -->
+                                <div class="user-img-c">
+                                    <img :src="userImg">
+                                </div>
                                 <span>{{userName}}</span>
-                                <Icon v-show="arrowDown" type="md-arrow-dropdown"/>
-                                <Icon v-show="arrowUp" type="md-arrow-dropup"/>
                             </div>
                             <DropdownMenu slot="list">
                                 <!-- name标识符 -->
@@ -112,22 +104,25 @@
 
                 <!-- 标签栏 -->
                 <div class="div-tags">
-                    <ul class="ul-c">
-                        <li v-for="(item, index) in tagsArry" :key="index" :class="{active: isActive(item.name)}" @click="activeTag(index)">
-                            <a class="li-a">
-                                {{item.text}}
-                            </a>
-                            <Icon size="16" @click="closeTag(index)" type="md-close" />
-                        </li>
-                    </ul>
+                    <div class="tags-wrap">
+                        <Icon type="md-arrow-round-back" class="left-nav" @click="navLeft"/>
+                        <Icon type="md-arrow-round-forward"  class="right-nav" @click="navRight"/>
+                        <div class="ul-c-wrap" ref="tagsListWrap">
+                            <ul class="ul-c" ref="tagsList" :style="{ transform: `translateX(${offsetLateral})`}">
+                                <li v-for="(item, index) in tagsArry" :key="index" :class="{active: isActive(item.name)}" @click="activeTag(index)">
+                                    <a class="li-a">
+                                        {{item.text}}
+                                    </a>
+                                    <Icon size="16" @click="closeTag(index)" type="ios-close-circle" />
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
                     <!-- 标签栏相关功能 -->
                     <div class="div-icons">
-                        <div class="refresh-c" @click="reloadPage" title="刷新当前标签页">
-                            <Icon type="md-refresh" />
-                        </div>
                         <div class="tag-options" title="关闭标签">
                             <Dropdown trigger="click" @on-click="closeTags">
-                                <Icon type="ios-options" />
+                                <span class="close-text">关闭操作 <Icon type="ios-arrow-down" :size="12" /> </span>
                                 <DropdownMenu slot="list">
                                     <DropdownItem name="1">关闭其他标签</DropdownItem>
                                     <DropdownItem name="2">关闭所有标签</DropdownItem>
@@ -153,6 +148,7 @@
 <script>
 import { resetTokenAndClearUser } from '@/utils'
 import { GetUserInfo } from '@/api/request'
+import { log } from 'util';
 
 export default {
     name:'layout',
@@ -183,6 +179,7 @@ export default {
             userImg: '',
             // 主页路由名称
             home: 'registrationManagement',
+            offsetLateral:''
         }
     },
     mounted() {
@@ -349,16 +346,16 @@ export default {
             switch (name) {
                 case '1':
                     // 修改密码
-                    this.gotoPage('password')
+                    //this.gotoPage('password')
                     break
                 case '2':
                     // 基本资料
-                    this.gotoPage('userinfo')
+                    //this.gotoPage('userinfo')
                     break
                 case '3':
                     // 退出登录
-                    resetTokenAndClearUser()
-                    this.$router.push({ name: 'login' })
+                    //resetTokenAndClearUser()
+                    //this.$router.push({ name: 'login' })
                     break
             }
         },
@@ -518,6 +515,18 @@ export default {
                 })
             }
         },
+        // 标签栏平移
+        navLeft() {
+            console.log('向左拖动')
+            let tagList = this.$refs.tagsListWrap
+            let width = tagList.clientWidth
+            let wrapWidth = this.$refs.tagsListWrap.clientWidth
+            let cWidth = width - wrapWidth;
+            this.offsetLateral = cWidth
+        },
+        navRight() {
+
+        }
     }
 }
 
@@ -550,12 +559,14 @@ aside
     .logo
         width: 80px;
         height: 80px;
-        margin-right: 10px;
+        margin-bottom: 10px;
     .sys-name
         display: inline-block;
         margin-top: 17px;
         text-align: center;
         font-size: 18px;
+        font-weight: 500;
+        line-height: 25px;
         color: #fff;
         .version-num
             color: rgba(255,255,255,.8);
@@ -576,7 +587,7 @@ header
     display flex
     align-items center
     justify-content space-between
-    padding-right 40px
+    padding-right 10px
     padding-left 10px
     font-size 14px
     .ivu-icon
@@ -591,12 +602,12 @@ header
     display flex
     align-items center
 .user-img-c 
-    width 34px
-    height 34px
+    width 24px
+    height 24px
     background #ddd
     border-radius 50%
-    margin 0 40px
     overflow hidden
+    margin-right: 8px;
     img
         width 100%
 .notice-c
@@ -614,43 +625,75 @@ header
     cursor pointer
     position relative
 .div-tags
-    display flex
-    align-items center
-    justify-content space-between
-    margin 4px 0
+    overflow: hidden;
+    border-top: 1px solid #E3E8EE;
+    background: #fff;
 .div-icons
+    float: right;
     display flex
-    justify-content flex-start
+    justify-content center
     align-items center
     background #fff
-    height 34px
-    width 160px
-    font-size 18px
+    height 30px
+    width 90px
+    font-size 18px;
+    border-left: 1px solid #e3e8ee;
+    .close-text
+        font-size: 13px;
+        color: #657180;
 // 标签栏
+.tags-wrap
+    position: relative;
+    float: left;
+    background #fff
+    margin 0 32px
+    border-left: 1px solid #E3E8EE;
+    border-right: 1px solid #E3E8EE;
+    display flex
+    justify-content flex-start
+    align-items center
+    width calc(100% - 154px)
+    box-sizing: border-box; 
+    .left-nav,.right-nav
+        padding: 5px;
+        cursor: pointer;
+    .left-nav
+        position: absolute;
+        left: -16px;
+        transform: translateX(-50%);
+    .right-nav
+        position: absolute;
+        right: -16px;
+        transform: translateX(50%);
+.ul-c-wrap
+    height 30px
+    overflow hidden
+    width: 100%;
+    position: relative;
 .ul-c
-    height 34px
+    height 30px
     background #fff
     display flex
     justify-content flex-start
     align-items center
-    padding 0 10px
-    overflow hidden
-    width calc(100% - 160px)
+    transition: 0.3s all;
+    transform: translateX(0);
+    position: absolute;
     li
-        border-radius: 3px
+        height: 100%;
         cursor pointer
+        color: #9EA7B4;
         font-size 12px
-        height 24px
         padding 0 10px
         display flex
         align-items center
         justify-content center
-        margin 3px 5px 2px 3px
-        border 1px solid #e6e6e6
+        border-right: 1px solid #E3E8EE;
     .ivu-icon
+        color: #C3CBD6;
         margin-left 6px
 a
-    color #666
+    color #9EA7B4
     transition none
 .li-a
     max-width 80px
@@ -658,12 +701,11 @@ a
     white-space nowrap
     text-overflow ellipsis
 .active
-    background #409eff
-    border 1px solid #409eff
+    background: #F5F7F9;
     a
-        color #fff
+        color #464C5B
     .ivu-icon
-        color #fff
+        color #FF5240
 // 主要内容区域
 .main-content
     height calc(100vh - 92px)
@@ -685,4 +727,7 @@ a
     color rgba(255,255,255,.7)
     > i 
         margin-right 6px
+.flex
+    display: flex;
+    align-items: center;
 </style>

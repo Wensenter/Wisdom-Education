@@ -20,6 +20,7 @@ export default {
 
 
 <style lang="stylus">
+@import './styles/menu.styl';
 #app
   height 100%
 /* loading */

@@ -1,0 +1,21 @@
+.ivu-menu-dark
+    background: #0077FF !important
+.ivu-menu-dark.ivu-menu-vertical .ivu-menu-item:hover, .ivu-menu-dark.ivu-menu-vertical .ivu-menu-submenu-title:hover
+    background: #0077FF !important
+.ivu-menu-dark.ivu-menu-vertical .ivu-menu-item-active:not(.ivu-menu-submenu), .ivu-menu-dark.ivu-menu-vertical .ivu-menu-item-active:not(.ivu-menu-submenu):hover, .ivu-menu-dark.ivu-menu-vertical .ivu-menu-submenu-title-active:not(.ivu-menu-submenu), .ivu-menu-dark.ivu-menu-vertical .ivu-menu-submenu-title-active:not(.ivu-menu-submenu):hover
+    background: #1E87FF !important
+    color: #fff !important
+    position: relative
+    &:after
+        content: ''
+        display: block
+        position: absolute
+        border-width: 5px
+        border-color: transparent #fff transparent transparent
+        border-style: solid
+        right: 0
+        top: 50%
+        transform: translateY(-50%) 
+.tag-options
+    .ivu-select-dropdown
+        right: 0
