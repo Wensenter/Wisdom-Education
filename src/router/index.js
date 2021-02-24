@@ -15,7 +15,7 @@ export const asyncRoutes = {
     path: 'functionManagement',
     name: 'functionManagement',
     meta: { title: '产品功能管理' },
-    component: () => import('../views/registrationManagement')
+    component: () => import('../views/functionManagement')
   },
 }
 

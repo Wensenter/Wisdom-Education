@@ -108,7 +108,7 @@
                         <Icon type="md-arrow-round-back" class="left-nav" @click="navLeft"/>
                         <Icon type="md-arrow-round-forward"  class="right-nav" @click="navRight"/>
                         <div class="ul-c-wrap" ref="tagsListWrap">
-                            <ul class="ul-c" ref="tagsList" :style="{ transform: `translateX(${offsetLateral})`}">
+                            <ul class="ul-c" ref="tagsList" :style="{ transform: `translateX(-${offsetLateral}px)`}">
                                 <li v-for="(item, index) in tagsArry" :key="index" :class="{active: isActive(item.name)}" @click="activeTag(index)">
                                     <a class="li-a">
                                         {{item.text}}
@@ -179,7 +179,7 @@ export default {
             userImg: '',
             // 主页路由名称
             home: 'registrationManagement',
-            offsetLateral:''
+            offsetLateral:0
         }
     },
     mounted() {
@@ -517,15 +517,34 @@ export default {
         },
         // 标签栏平移
         navLeft() {
-            console.log('向左拖动')
-            let tagList = this.$refs.tagsListWrap
+            let tagList = this.$refs.tagsList
             let width = tagList.clientWidth
             let wrapWidth = this.$refs.tagsListWrap.clientWidth
-            let cWidth = width - wrapWidth;
-            this.offsetLateral = cWidth
+            let cWidth
+            if((width - wrapWidth - this.offsetLateral) > wrapWidth) {
+                cWidth = wrapWidth
+            } else if((width - wrapWidth - this.offsetLateral) <= 0 ) {
+                cWidth = 0
+            } else {
+                cWidth = width - wrapWidth - this.offsetLateral
+            }
+            
+            this.offsetLateral += cWidth;
         },
         navRight() {
-
+            let tagList = this.$refs.tagsList
+            let width = tagList.clientWidth
+            let wrapWidth = this.$refs.tagsListWrap.clientWidth
+            let cWidth
+            if(this.offsetLateral > wrapWidth) {
+                cWidth = wrapWidth
+            } else if(this.offsetLateral <= 0 ) {
+                cWidth = 0
+            } else {
+                cWidth = this.offsetLateral
+            }
+            
+            this.offsetLateral -= cWidth;
         }
     }
 }
@@ -625,7 +644,7 @@ header
     cursor pointer
     position relative
 .div-tags
-    overflow: hidden;
+    display: flex;
     border-top: 1px solid #E3E8EE;
     background: #fff;
 .div-icons
@@ -641,6 +660,7 @@ header
     .close-text
         font-size: 13px;
         color: #657180;
+        user-select: none;
 // 标签栏
 .tags-wrap
     position: relative;
@@ -708,11 +728,18 @@ a
         color #FF5240
 // 主要内容区域
 .main-content
-    height calc(100vh - 92px)
+    height calc(100vh - 81px)
+    padding-top: 10px;
+    padding-left: 10px;
     overflow auto
+    background: #f5f7f9;
 .view-c
     position relative
     height 100%
+    background: #fff;
+    overflow: auto;
+    padding: 20px;
+    min-width: 890px;
 .pointer
     cursor pointer
 .crumbs
